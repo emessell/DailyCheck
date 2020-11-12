@@ -135,6 +135,7 @@
       }
 
       // 테이블 생성
+      // TODO: readData()에서 값을 return 해주면 그 정보로 테이블 만들기
       function makeTable() {
         $('body').append('<table></table>');
         for (let i = 0; i < 10; i++) {
@@ -163,7 +164,7 @@
       }
       
       // 처음에 값 불러오기
-      // TODO: 
+      // TODO: 비동기로 값 불러와서 return 하기
       function readData() {
         firebase.database().ref('/users/' + uid).once('value').then(function(snapshot) {
           var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
@@ -192,7 +193,6 @@
         if($(this).children().length == 0){
           $(this).append('<input/>');
           $(this).append('<button class="title_submit">확인</button>');
-        }else{
         }
       });
 
@@ -213,21 +213,10 @@
         }
 
         SaveTable();
-
-        // console.log($('table').find('tr'));
-        // let tr = $(this).parent('tr');
-        // let title = tr.find('.title').text();
-        // let td = tr.find('td.on');
-        // let dayArray = [];
-        // for (let i = 0; i < td.length; i++) {
-        //   dayArray.push(td[i].dataset.day);
-        // }
-        // let data = {};
-        // data[title] = dayArray.toString();
-        // writeData(data);
       });
 
-      // 전체 저장하기
+      // 테이블 전체 저장하기
+      // TODO: 끝에 빈 값["":""]이 붙어서 삭제해야함
       function SaveTable() {
         var tr = $('table').find('tr');
         var data = {};

@@ -1,13 +1,13 @@
 html,
 body {
   height: 100%;
-  width: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
   position: relative;
+  padding: 30px;
 }
 
 h1,
@@ -45,9 +45,16 @@ h1 {
 }
 
 table {
+  min-width: 1127px;
   border: 1px solid;
   border-collapse: collapse;
-  margin: 30px auto;
+  margin: 30px;
+}
+
+@media screen and (min-width: 1127px) {
+    table{
+        margin: 30px auto;
+    }
 }
 
 table tr td,
@@ -63,5 +70,15 @@ th {
 }
 
 .title {
-  width: 100px;
+  width: 200px;
+}
+
+.titleInput{
+  display: inline-block;
+  width: 120px;
+}
+
+.titleSubmit{
+  display: inline-block;
+  width: 50px;
 }

@@ -24,10 +24,6 @@
 
 <body>
   <h1>맨날 하란말이야</h1>
-  <ol>
-    <li>제목 먼저 쓰기</li>
-    <li>체크하기</li>
-  </ol>
 
   <script>
     var config = {
@@ -45,16 +41,17 @@
 
     if ($.cookie('uid') == null) {
       GetGoogle();
-      readData();
     } else {
       uid = $.cookie('uid');
-      (async () => {
-        let data = await readData();
-        console.log("ReadData: ", data);
-      })();
     }
 
-    makeTable();
+    // 로그인 후 데이터 읽기
+    (async () => {
+      let data = await readData();
+      makeTable(data);
+      // console.log("ReadData: ", data);
+    })();
+    
 
     // 구글 로그인
     async function GetGoogle() {
@@ -68,7 +65,7 @@
         var email = result.user.email;
         uid = user.uid;
         $.cookie("uid", uid, { expires: 7 });
-        console.log(result);
+        // console.log(result);
 
       }).catch(function (error) {
         var errorCode = error.code;
@@ -81,27 +78,30 @@
     }
 
     // 테이블 생성
-    // TODO: readData()에서 값을 return 해주면 그 정보로 테이블 만들기
-    function makeTable() {
+    function makeTable(data) {
       $('body').append('<table></table>');
+
       for (let i = 0; i < 10; i++) {
+        // row 생성
         var row = document.createElement('tr');
         $('table').append(row);
 
+        // 제목부분은 th로
         let title = document.createElement('th');
         if(i > 0){
           title.classList.add("title");
         }
         row.append(title);
 
-        if (i == 0) {
+        // 나머지 부분은 td로, 날짜 표시부분 예외
+        if (i == 0) { // 날짜 표시 부분
           title.append("Title");
           for (let x = 1; x < 32; x++) {
             let col = document.createElement('th');
             row.append(col);
             col.append(x);
           }
-        } else {
+        } else { // 체크 칸
           for (let x = 1; x < 32; x++) {
             let col = document.createElement('td');
             col.dataset.day = x;
@@ -109,10 +109,28 @@
           }
         }
       }
+
+      // 테이블에 데이터 넣기
+      const info = data.info;
+      let infoCount = 0;
+
+      for (const key in info) {
+        const value = info[key];
+        // console.log("Key: " , key);
+        // console.log("Value: " , value);
+
+        const valueArray = value.split(',');
+        valueArray.forEach((e,i) => {
+          // console.log("e:", e, ", i:", i+1);
+          $("table").find('tr').eq(infoCount+1).find(`[data-day='${e}']`).addClass('on');
+          $("table").find('tr').eq(infoCount+1).find(`[data-day='${e}']`).append("<i class='doneIcon'>👌</i>");
+        });
+
+        $('.title')[infoCount++].append(key);
+      }
     }
 
     // 처음에 값 불러오기
-    // TODO: 비동기로 값 불러와서 return 하기
     function readData() {
       return firebase.database().ref('/users/' + uid).once('value').then(function (snapshot) {
         var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
@@ -136,22 +154,24 @@
     }
 
     // 제목 칸 클릭
-    $('.title').click(function () {
+    $(document).on('click','.title',function () {
       if ($(this).children().length == 0) {
-        $(this).append('<input/>');
-        $(this).append('<button class="title_submit">확인</button>');
+        $(this).append('<div class="inputBox"></div>');
+        $(this).find(".inputBox").append('<input class="titleInput" onkeyup="enterkey()"/>');
+        $(this).find(".inputBox").append('<button class="titleSubmit">확인</button>');
       }
     });
 
     // 제목 입력 후 확인
-    $(document).on('click', '.title_submit', function () {
+    $(document).on('click', '.titleSubmit', function () {
       let val = $(this).prev('input').val();
       $(this).parent().text(val);
+      $(this).prev('input').remove();
+      $(this).remove();
     });
 
     // 칸 누를 때
-    // TODO: 제목이 입력되어 있는지 확인
-    $('td').click(function (e) {
+    $(document).on('click','td',function (e) {
       if($(this).parent().find('.title').text() == ""){
         alert("제목 먼저 입력해주세요.");
         return;
@@ -190,7 +210,13 @@
         data[title] = dayArray.toString();
       }
       writeData(data);
-      console.log(data);
+      // console.log(data);
+    }
+
+    function enterkey() {
+      if (window.event.keyCode == 13) {
+        $('.titleSubmit').click();
+      }
     }
   </script>
 </body>

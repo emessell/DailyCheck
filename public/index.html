@@ -151,23 +151,33 @@
       firebase.database().ref('users/' + uid).set({
         info: data
       });
+      console.log("Saved Successfully");
     }
+
+    // 입력창 FLAG
+    let isEditing = false;
 
     // 제목 칸 클릭
     $(document).on('click','.title',function () {
-      if ($(this).children().length == 0) {
+      if ($(this).children().length == 0 && !isEditing) {
         $(this).append('<div class="inputBox"></div>');
         $(this).find(".inputBox").append('<input class="titleInput" onkeyup="enterkey()"/>');
         $(this).find(".inputBox").append('<button class="titleSubmit">확인</button>');
+        isEditing = true;
       }
     });
 
     // 제목 입력 후 확인
     $(document).on('click', '.titleSubmit', function () {
-      let val = $(this).prev('input').val();
-      $(this).parent().text(val);
-      $(this).prev('input').remove();
-      $(this).remove();
+      if(isEditing){
+        let val = $(this).prev('input').val();
+        $(this).parent().parent().text(val);
+        $('.inputBox').remove();
+        setTimeout(function() {
+          isEditing = false;
+        }, 1000);
+        SaveTable();
+      }
     });
 
     // 칸 누를 때

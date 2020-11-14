@@ -82,3 +82,7 @@ th {
   display: inline-block;
   width: 50px;
 }
+
+.bugReport{
+  text-align: center;
+}

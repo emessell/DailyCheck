@@ -67,12 +67,12 @@
         uid = user.uid;
         $.cookie("uid", uid, { expires: 7 });
         // console.log(result);
-
       }).catch(function (error) {
         var errorCode = error.code;
         var errorMessage = error.message;
         var email = error.email;
         var credential = error.credential;
+        alert("로그인 실패");
       });
       location.reload();  
       return;
@@ -94,15 +94,23 @@
         }
         row.append(title);
 
-        // 나머지 부분은 td로, 날짜 표시부분 예외
-        if (i == 0) { // 날짜 표시 부분
+        if (i == 0) { // 날짜 칸 TH
+          var today = new Date().getDate();
           title.append("Title");
           for (let x = 1; x < 32; x++) {
-            let col = document.createElement('th');
+            const col = document.createElement('th');
+            const dateElement = document.createElement('span');
             row.append(col);
-            col.append(x);
+            if(x == today){
+              dateElement.append(x);
+              dateElement.classList.add('today');
+              col.append(dateElement);
+            }else{
+              dateElement.append(x);
+              col.append(dateElement);
+            }
           }
-        } else { // 체크 칸
+        } else { // 체크 칸 TD
           for (let x = 1; x < 32; x++) {
             let col = document.createElement('td');
             col.dataset.day = x;

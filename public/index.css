@@ -86,3 +86,14 @@ th {
 .bugReport{
   text-align: center;
 }
+
+.today{
+  display: block;
+  width: 24px;
+  height: 23px;
+  background-color: coral;
+  border-radius: 20px;
+  color: white;
+  margin: 0 auto;
+  text-align: center;
+}
